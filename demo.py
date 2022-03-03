@@ -1,5 +1,5 @@
-from main import get_train_data_from_endpoint
-from main import get_day_in_month_list
+from library import get_train_data_from_endpoint
+from library import get_day_in_month_list
 
 days_str = get_day_in_month_list(year=2020, month=7)
 print(days_str)
