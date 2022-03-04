@@ -1,8 +1,8 @@
+import calendar
 import io
 from datetime import date as Date
-import calendar
-from typing import List
 from typing import Dict
+from typing import List
 
 import requests
 import pandas as pd
