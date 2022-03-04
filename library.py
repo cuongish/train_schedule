@@ -1,16 +1,18 @@
+import io
 from datetime import date as Date
 import calendar
 from typing import List
 from typing import Dict
 
 import requests
-
+import pandas as pd
 
 train_data_endpoint = "https://rata.digitraffic.fi/api/v1/trains"
 
 
 def get_day_in_month_list(year: int, month: int) -> List[Date]:
     number_of_days_in_month = calendar.monthrange(year, month)[1]
+
     days_in_month = [Date(year, month, day) for day in range(1, number_of_days_in_month+1)]
 
     return days_in_month
@@ -30,3 +32,13 @@ def get_train_data_from_endpoint(date: Date, train_number: int) -> List[Dict]:
     subjects = result.json()
 
     return subjects
+
+
+def convert_list_to_normalize_df(list_of_data: List[Dict]) -> pd.DataFrame:
+    result = pd.DataFrame(list_of_data)
+    return result
+
+
+def df_to_csv(df: pd.DataFrame) -> io.BytesIO:
+    result = df.to_csv()
+    return result
