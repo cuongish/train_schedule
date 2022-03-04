@@ -1,4 +1,3 @@
-import datetime
 from datetime import date as Date
 import calendar
 from typing import List
@@ -12,7 +11,7 @@ train_data_endpoint = "https://rata.digitraffic.fi/api/v1/trains"
 
 def get_day_in_month_list(year: int, month: int) -> List[Date]:
     number_of_days_in_month = calendar.monthrange(year, month)[1]
-    days_in_month = [datetime.date(year, month, day) for day in range(1, number_of_days_in_month+1)]
+    days_in_month = [Date(year, month, day) for day in range(1, number_of_days_in_month+1)]
 
     return days_in_month
 
