@@ -9,7 +9,7 @@ import pandas as pd
 train_data_endpoint = "https://rata.digitraffic.fi/api/v1/trains"
 
 
-def get_day_in_month_list(year: int, month: int) -> List[Date]:
+def get_list_of_days_in_month(year: int, month: int) -> List[Date]:
     number_of_days_in_month = calendar.monthrange(year, month)[1]
 
     days_in_month = [Date(year, month, day) for day in range(1, number_of_days_in_month+1)]
@@ -21,6 +21,8 @@ def get_train_data_from_endpoint(date: Date, train_number: int) -> List[Dict]:
     day = date.strftime("%Y-%m-%d")
 
     url_endpoint = f"{train_data_endpoint}/{day}/{train_number}"
+    if not url_endpoint.startswith("https://"):
+        raise ValueError('url does not starts with https://')
 
     header = {"content-type": "application/json"}
 

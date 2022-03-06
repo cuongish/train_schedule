@@ -1,5 +1,5 @@
 from library import get_train_data_from_endpoint
-from library import get_day_in_month_list
+from library import get_list_of_days_in_month
 from library import convert_list_to_normalized_df
 from library import df_to_csv
 import os
@@ -11,7 +11,7 @@ train_number = 4
 path = os.path.join(folder, str(year))
 
 # Get datetime.date for days in the month
-days_list = get_day_in_month_list(year=year, month=month)
+days_list = get_list_of_days_in_month(year=year, month=month)
 csv_file_name = days_list[0].strftime('%Y-%m')
 
 # Iterate API calls to retrieve train traffic data for every day in the month
