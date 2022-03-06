@@ -1,7 +1,13 @@
 attrs==21.4.0
     # via pytest
+certifi==2021.10.8
+    # via requests
+charset-normalizer==2.0.12
+    # via requests
 coverage==6.3.2
     # via -r requirements/test-requirements.in
+idna==3.3
+    # via requests
 importlib-metadata==4.11.2
     # via
     #   pluggy
@@ -18,9 +24,17 @@ pyparsing==3.0.7
     # via packaging
 pytest==7.0.1
     # via -r requirements/test-requirements.in
+requests==2.27.1
+    # via responses
+responses==0.18.0
+    # via -r requirements/test-requirements.in
 tomli==2.0.1
     # via pytest
 typing-extensions==4.1.1
     # via importlib-metadata
+urllib3==1.26.8
+    # via
+    #   requests
+    #   responses
 zipp==3.7.0
     # via importlib-metadata
