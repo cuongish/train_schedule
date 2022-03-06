@@ -31,3 +31,7 @@ and write the final output in a csv file.
   ```bash
     jupyter notebook analysis.ipynb
   ```
+
+### Improvement TODO:
+- Improve unit test coverage to 100%
+- Add integration test for demo.py

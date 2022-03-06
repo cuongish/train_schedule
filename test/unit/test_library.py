@@ -5,15 +5,10 @@ from unittest import mock
 
 import responses
 
-import pandas
-from unittest.mock import patch
-
 from library import get_list_of_days_in_month
 from library import get_train_data_from_endpoint
 from library import convert_list_to_normalized_df
 from library import df_to_csv
-
-from library import train_data_endpoint
 
 
 class TestMain(unittest.TestCase):
@@ -27,7 +22,30 @@ class TestMain(unittest.TestCase):
         cls.train_number = 4
         cls.url = f'{cls.test_url}/{cls.date}/{cls.train_number}'
 
-        cls.train_correct_response = [
+        cls.train_correct_response = [{
+            'column1': 'string1',
+            'column2': 'string2',
+            'record_column': [
+                {
+                    'column1': 'string11',
+                    'column2': 'string21'
+                },
+                {
+                    'column1': 'string12',
+                    'column2': 'string22'
+                },
+                {
+                    'column1': 'string13',
+                    'column2': 'string23'
+                }
+            ]
+        }
+        ]
+
+        cls.result_df = convert_list_to_normalized_df(data=cls.train_correct_response,
+                                                      record_column='record_column',
+                                                      meta_columns=['column1', 'column2'])
+        cls.train_correct_response_e = [
             {
                 'trainNumber': cls.train_number,
                 'departureDate': cls.date,
@@ -97,8 +115,21 @@ class TestMain(unittest.TestCase):
         with mock.patch('library.train_data_endpoint', self.test_url):
             responses.add(responses.GET, url=self.url,
                           json=self.train_correct_response, status=200)
-
             resp = get_train_data_from_endpoint(date=self.date_now,
                                                 train_number=self.train_number)
-
             self.assertEqual(self.train_correct_response, resp)
+
+    def test_convert_list_to_normalized_df__returns_correct_number_of_record_rows(self):
+        self.assertEqual(3, len(self.result_df.index))
+
+    def test_convert_list_to_normalized_df__returns_correct_number_of_record_columns(self):
+        self.assertEqual(4, len(self.result_df.columns))
+
+    def test_convert_list_to_normalized_df__prefixed_meta_column_to_avoid_duplicates(self):
+        self.assertTrue({'meta_column1', 'meta_column2'}.issubset(self.result_df.columns))
+
+    def test_df_to_csv__overwrites_if_folder_exists(self):
+        unittest.skip('WIP')
+
+    def test_df_to_csv__overwrites_if_file_exists(self):
+        unittest.skip('WIP')
