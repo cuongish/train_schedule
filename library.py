@@ -1,9 +1,8 @@
 import calendar
-import io
 from datetime import date as Date
 from typing import Dict
 from typing import List
-
+import os
 import requests
 import pandas as pd
 
@@ -34,11 +33,18 @@ def get_train_data_from_endpoint(date: Date, train_number: int) -> List[Dict]:
     return subjects
 
 
-def convert_list_to_normalize_df(list_of_data: List[Dict]) -> pd.DataFrame:
-    result = pd.DataFrame(list_of_data)
+def convert_list_to_normalized_df(data: List[Dict], record_column: str,
+                                  meta_columns: List[str]) -> pd.DataFrame:
+    result = pd.concat([pd.json_normalize(data=data[i], record_path=record_column,
+                                          meta=meta_columns, meta_prefix='meta_')
+                        for i in range(len(data))])
     return result
 
 
-def df_to_csv(df: pd.DataFrame) -> io.BytesIO:
-    result = df.to_csv()
-    return result
+def df_to_csv(df: pd.DataFrame, path: str, csv_file_name: str) -> str:
+    os.makedirs(path, exist_ok=True)
+    file_path = os.path.join(path, f"{csv_file_name}.csv")
+
+    df.to_csv(file_path)
+
+    print(f'{csv_file_name}.csv is created in {file_path}')
