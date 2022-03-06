@@ -1,9 +1,12 @@
 # coding: utf-8
 import datetime
+import os
 import unittest
 from unittest import mock
 
+import pandas as pd
 import responses
+import shutil
 
 from library import get_list_of_days_in_month
 from library import get_train_data_from_endpoint
@@ -11,7 +14,7 @@ from library import convert_list_to_normalized_df
 from library import df_to_csv
 
 
-class TestMain(unittest.TestCase):
+class TestLibrary(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -45,40 +48,9 @@ class TestMain(unittest.TestCase):
         cls.result_df = convert_list_to_normalized_df(data=cls.train_correct_response,
                                                       record_column='record_column',
                                                       meta_columns=['column1', 'column2'])
-        cls.train_correct_response_e = [
-            {
-                'trainNumber': cls.train_number,
-                'departureDate': cls.date,
-                'operatorUICCode': 1,
-                'operatorShortCode': 'ab',
-                'trainType': 'AB',
-                'trainCategory': 'train_category',
-                'commuterLineID': '',
-                'runningCurrently': False,
-                'cancelled': False,
-                'version': 12344567890,
-                'timetableType': 'TIMETABLE_TYPE',
-                'timetableAcceptanceDate': cls.date,
-                'timeTableRows': [
-                    {'stationShortCode': 'ABC',
-                     'stationUICCode': 123,
-                     'countryCode': 'FI',
-                     'type': 'DEPARTURE',
-                     'trainStopping': True,
-                     'commercialStop': True,
-                     'commercialTrack': '1',
-                     'cancelled': False,
-                     'scheduledTime': '2020-01-01T03:10:00.000Z',
-                     'actualTime': '2020-01-01T03:10:54.000Z',
-                     'differenceInMinutes': 1,
-                     'causes': [],
-                     'trainReady': {'source': 'ABCDEF',
-                                    'accepted': True,
-                                    'timestamp': '2020-01-01T03:01:36.000Z'}
-                     }
-                ]
-            }
-        ]
+        cls.path = 'test_data'
+        cls.csv_file_name = 'test_file'
+        cls.file_path = os.path.join(cls.path, f"{cls.csv_file_name}.csv")
 
     def test_get_list_of_days_in_month__returns_29_days_for_february_in_leap_year(self):
         expected = 29
@@ -126,10 +98,26 @@ class TestMain(unittest.TestCase):
         self.assertEqual(4, len(self.result_df.columns))
 
     def test_convert_list_to_normalized_df__prefixed_meta_column_to_avoid_duplicates(self):
-        self.assertTrue({'meta_column1', 'meta_column2'}.issubset(self.result_df.columns))
+        self.assertTrue({'meta_column1',
+                         'meta_column2'}.issubset(self.result_df.columns))
+
+    def test_df_to_csv__file_exists_and_is_readable(self):
+        df_to_csv(df=pd.DataFrame(),
+                  path=self.path,
+                  csv_file_name=self.csv_file_name)
+        self.assertTrue(os.access(self.file_path, os.R_OK))
 
     def test_df_to_csv__overwrites_if_folder_exists(self):
-        unittest.skip('WIP')
+        # running df_to_csv on test_file1 creates /Path/ folder
+        # and running on test_file2 overwrites the existing folder
+        list_of_csv = ['test_file1', 'test_file2']
 
-    def test_df_to_csv__overwrites_if_file_exists(self):
-        unittest.skip('WIP')
+        [df_to_csv(df=pd.DataFrame(),
+                   path=self.path,
+                   csv_file_name=csv) for csv in list_of_csv]
+
+        self.assertTrue(os.path.isfile(self.file_path))
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.path)
