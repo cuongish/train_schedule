@@ -1,12 +1,35 @@
 from library import get_train_data_from_endpoint
 from library import get_day_in_month_list
+from library import convert_list_to_normalized_df
+from library import df_to_csv
+import os
 
-days_list = get_day_in_month_list(year=2020, month=7)
-print(days_list)
-
+folder = "data"
+year = 2020
+month = 7
 train_number = 4
+path = os.path.join(folder, str(year))
 
-data = [get_train_data_from_endpoint(train_number=4, date=day) for day in days_list]
+# Get datetime.date for days in the month
+days_list = get_day_in_month_list(year=year, month=month)
+csv_file_name = days_list[0].strftime('%Y-%m')
 
-timetable_rows = data[0][0]['timeTableRows']
-print(data)
+# Iterate API calls to retrieve train traffic data for every day in the month
+data = [get_train_data_from_endpoint(train_number=train_number,
+                                     date=day)
+        for day in days_list]
+
+# Define record column and metadata columns for Normalization
+record_column = "timeTableRows"
+meta_columns = list(data[0][0].keys())
+meta_columns.remove(record_column)
+
+# Normalize and output one concat df for the entire month
+result = convert_list_to_normalized_df(data=data,
+                                       record_column=record_column,
+                                       meta_columns=meta_columns)
+
+# Output CSV into data folder in Year/month partition structure
+df_to_csv(df=result,
+          path=path,
+          csv_file_name=csv_file_name)
