@@ -33,4 +33,4 @@ and write the final output in a csv file.
   ```
 
 ### Improvement TODO:
-- Add integration test for demo.py
+- Add integration test for main.py
