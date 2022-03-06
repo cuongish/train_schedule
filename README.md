@@ -25,7 +25,7 @@ source venv/bin/activate
 - Demo 1: Collect data for the whole month of July 2020 for train number 4 using train traffic API, normalize the data
 and write the final output in a csv file.
   ```bash
-    python3 demo.py
+    python3 main.py
   ```
 - Demo 2: Calculate the average actual arrival time at the final destination of the train during the month July 2020. 
   ```bash
