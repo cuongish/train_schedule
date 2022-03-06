@@ -49,4 +49,4 @@ def df_to_csv(df: pd.DataFrame, path: str, csv_file_name: str) -> str:
 
     df.to_csv(file_path)
 
-    print(f'{csv_file_name}.csv is created in {file_path}')
+    return file_path
