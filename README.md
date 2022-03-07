@@ -34,3 +34,14 @@ and write the final output in a csv file.
 
 ### Improvement TODO:
 - Add integration test for main.py
+- Implement pauses and attempts-count in-between API call to avoid timeout similar to [this function](https://github.com/cuongish/unigloo/blob/69ec836dbc6865ef006e1b9269286fd6ed94b7a3/unigloo_lib.py#L29).
+- Iterating through nested loop will retrieve entire history of data.
+```python
+    month_list = [1,...,12]
+    year_list = [2016,...,2021]
+    train_number = 4
+    for year in year_list:
+        for month in month_list:
+            ...
+ ```
+    
