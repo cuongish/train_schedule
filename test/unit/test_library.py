@@ -26,8 +26,8 @@ class TestLibrary(unittest.TestCase):
         cls.url = f'{cls.test_url}/{cls.date}/{cls.train_number}'
 
         cls.train_correct_response = [{
-            'column1': 'string1',
-            'column2': 'string2',
+            'column1': 'meta_string1',
+            'column2': 'meta_string2',
             'record_column': [
                 {
                     'column1': 'string11',
@@ -45,6 +45,13 @@ class TestLibrary(unittest.TestCase):
         }
         ]
 
+        cls.correct_converted_df = pd.DataFrame(data={
+            'column1': ['string11', 'string12', 'string13'],
+            'column2': ['string21', 'string22', 'string23'],
+            'meta_column1': ['meta_string1', 'meta_string1', 'meta_string1'],
+            'meta_column2': ['meta_string2', 'meta_string2', 'meta_string2']
+        }
+        )
         cls.result_df = convert_list_to_normalized_df(data=cls.train_correct_response,
                                                       record_column='record_column',
                                                       meta_columns=['column1', 'column2'])
@@ -92,10 +99,20 @@ class TestLibrary(unittest.TestCase):
             self.assertEqual(self.train_correct_response, resp)
 
     def test_convert_list_to_normalized_df__returns_correct_number_of_record_rows(self):
-        self.assertEqual(3, len(self.result_df.index))
+        self.assertEqual(
+            len(self.correct_converted_df.index),
+            len(self.result_df.index)
+        )
 
     def test_convert_list_to_normalized_df__returns_correct_number_of_record_columns(self):
-        self.assertEqual(4, len(self.result_df.columns))
+        self.assertEqual(
+            len(self.correct_converted_df.columns),
+            len(self.result_df.columns)
+        )
+
+    def test_convert_list_to_normalized_df__returns_correct_normalized_df_as_expected(self):
+        pd.util.testing.assert_frame_equal(self.correct_converted_df,
+                                           self.result_df)
 
     def test_convert_list_to_normalized_df__prefixed_meta_column_to_avoid_duplicates(self):
         self.assertTrue({'meta_column1',
